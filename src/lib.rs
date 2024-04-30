@@ -17,6 +17,9 @@
 //! values are simple scalars rather than potentially composite text
 //! is also implemented.
 
-mod map;
-mod set;
-mod scalar;
+pub mod scalar;
+
+pub mod text {
+    mod map;
+    mod set;
+}
