@@ -1,3 +1,5 @@
+//! Versions of BilevelMap and BilevelSet using scalar keys.
+
 use std::{collections::{HashMap, HashSet}, hash::Hash};
 
 /// A collection of distinct pairs (g, k) grouped by g.
