@@ -18,7 +18,7 @@ where
 
 impl<G, K> BilevelSet<G, K>
 where
-    G: Hash + Eq + Copy,
+    G: Hash + Eq + Copy + 'static,
     K: Hash + Eq + Copy,
 {
     /// Create a new collection.
@@ -57,6 +57,12 @@ where
     pub fn iter<'a>(&'a self) -> impl Iterator<Item = (G, K)> + 'a {
         self.data.iter()
             .map(|(g, set)| set.iter().map(|k| (*g, *k)))
+            .flatten()
+    }
+
+    pub fn into_iter(self) -> impl Iterator<Item = (G, K)>{
+        self.data.into_iter()
+            .map(|(g, set)| set.into_iter().map(move |k| (g, k)))
             .flatten()
     }
 }
