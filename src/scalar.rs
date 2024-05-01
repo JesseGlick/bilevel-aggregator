@@ -18,8 +18,8 @@ where
 
 impl<G, K> BilevelSet<G, K>
 where
-    G: Hash + Eq,
-    K: Hash + Eq,
+    G: Hash + Eq + Copy,
+    K: Hash + Eq + Copy,
 {
     /// Create a new collection.
     /// 
@@ -54,52 +54,9 @@ where
             .insert(k)
     }
 
-    pub fn iter<'a>(&'a self) -> Iter<'a, G, K> {
-        Iter {
-            outer: self.data.iter(),
-            inner: None
-        }
-    }
-}
-
-pub struct Iter<'a, G, K> {
-    outer: std::collections::hash_map::Iter<'a, G, HashSet<K>>,
-    inner: Option<(&'a G, std::collections::hash_set::Iter<'a, K>)>,
-}
-
-impl<'a, G, K> Iterator for Iter<'a, G, K> {
-    type Item = (&'a G, &'a K);
-
-    fn next(&mut self) -> Option<Self::Item> {
-        // Get the next value from the current inner loop, there is one.
-        // Otherwise look for the next non-empty inner.
-        if let Some((g, inner)) = &mut self.inner {
-            if let Some(k) = inner.next() {
-                Some((g, k))
-            } else {
-                self.search()
-            }
-        } else {
-            self.search()
-        }
-    }
-}
-
-impl<'a, G, K> Iter<'a, G, K> {
-    fn search(&mut self) -> Option<(&'a G, &'a K)> {
-        // Look for the next non-empty inner loop.
-        loop {
-            if let Some((g, inner)) = self.outer.next() {
-                let mut inner = inner.iter();
-                if let Some(k) = inner.next() {
-                    // A non-empty inner was found.
-                    // Return the first item and make it the current one.
-                    self.inner = (g, inner)
-                }
-            } else {
-                // The outer loop has been exhausted.
-                return  None;
-            }
-        }
+    pub fn iter<'a>(&'a self) -> impl Iterator<Item = (G, K)> + 'a {
+        self.data.iter()
+            .map(|(g, set)| set.iter().map(|k| (*g, *k)))
+            .flatten()
     }
 }
