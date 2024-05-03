@@ -11,8 +11,8 @@ use std::{collections::{HashMap, HashSet}, hash::Hash};
 /// K is the type of the remaining key.
 pub struct BilevelSet<G, K>
 where
-    G: Hash + Eq,
-    K: Hash + Eq,
+G: Hash + Eq + Copy + 'static,
+K: Hash + Eq + Copy,
 {
     data: HashMap<G, HashSet<K>>,
     per_group: usize,
