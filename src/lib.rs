@@ -19,7 +19,25 @@
 
 pub mod scalar;
 
+/// Versions of BilevelSet and BilevelMap using Arrays of strings as keys.
 pub mod text {
     mod map;
     mod set;
+
+    pub use set::BilevelSet;
+    pub use map::BilevelMap;
+}
+
+/// Abstract versions of BilevelSet and BilevelMap.
+pub mod core {
+    /// The capacity dimensions of a BilateralSet of BilateralTree.
+    pub struct Capacity {
+        /// The number of groups to allocate space for.
+        pub groups: usize,
+        /// The number of items to allocate capacity for when a new
+        /// group key is found.
+        pub per_group: usize,
+        /// The number of distinct aggregator keys to allocate space for.
+        pub agg_keys: usize,
+    }
 }
