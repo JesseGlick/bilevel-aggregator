@@ -139,7 +139,7 @@ where
     /// Get a mutable reference to the payload for the specified key pair.
     /// 
     /// If the key pair is currently not present, the default payload is inserted.
-    pub fn get_mut(&mut self, g: G, k: K) -> &mut V {
+    pub fn add_or_get(&mut self, g: G, k: K) -> &mut V {
         self.data.entry(g)
             .or_insert(HashMap::with_capacity(self.per_group))
             .entry(k)
