@@ -11,8 +11,8 @@ use std::{collections::{HashMap, HashSet}, hash::Hash};
 /// K is the type of the remaining key.
 pub struct BilevelSet<G, K>
 where
-G: Hash + Eq + Copy + 'static,
-K: Hash + Eq + Copy,
+G: Hash + Eq,
+K: Hash + Eq,
 {
     data: HashMap<G, HashSet<K>>,
     per_group: usize,
@@ -91,8 +91,8 @@ where
 /// V is the type of the payload.
 pub struct BilevelMap <G, K, V>
 where
-    G: Hash + Eq + Copy + 'static,
-    K: Hash + Eq + Copy,
+    G: Hash + Eq,
+    K: Hash + Eq,
 {
     data: HashMap<G, HashMap<K, V>>,
     per_group: usize,
