@@ -1,4 +1,4 @@
-//! Versions of BilevelMap and BilevelSet using scalar keys.
+//! Versions of BilevelMap and BilevelSet using keys that are copy types.
 
 use std::{collections::{HashMap, HashSet}, hash::Hash};
 

@@ -17,7 +17,7 @@
 //! values are simple scalars rather than potentially composite text
 //! is also implemented.
 
-pub mod scalar;
+pub mod copy;
 
 /// Versions of BilevelSet and BilevelMap using Arrays of strings as keys.
 pub mod text {
