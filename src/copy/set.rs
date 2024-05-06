@@ -49,7 +49,7 @@ where
     /// g: the group key.
     /// k: the remaining key.
     /// 
-    /// Return true if the key was already present.
+    /// Return false if the key was already present, otherwise true.
     pub fn insert(&mut self, g: G, k: K) -> bool {
         self.data.entry(g)
             .or_insert(HashSet::with_capacity(self.per_group))
