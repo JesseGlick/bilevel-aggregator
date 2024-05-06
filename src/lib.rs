@@ -17,7 +17,18 @@
 //! values are simple scalars rather than potentially composite text
 //! is also implemented.
 
-pub mod copy;
+/// Implementations where both the group key and the aggregation key
+/// are copy types.
+pub mod copy {
+    mod map;
+    mod set;
+
+    pub use map::BilevelMap;
+    pub use set::BilevelSet;
+
+    #[cfg(test)]
+    pub mod tests;
+}
 
 /// The capacity dimensions of a BilateralSet of BilateralTree.
 pub struct Capacity {
