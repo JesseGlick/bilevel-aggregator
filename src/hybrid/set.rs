@@ -15,7 +15,7 @@ where
     G: Hash + Eq,
 {
     per_group: usize,
-    /// Key a single copy of each key here, rather than one in each group
+    /// Keep a single copy of each key here, rather than one in each group
     /// where it appears.
     keys: Vec<K>,
     groups: HashMap<G, HashSet<usize>>,
