@@ -17,6 +17,8 @@
 //! values are simple scalars rather than potentially composite text
 //! is also implemented.
 
+use std::hash::{Hash, Hasher, DefaultHasher};
+
 /// Implementations where both the group key and the aggregation key
 /// are copy types.
 pub mod copy {
@@ -52,4 +54,10 @@ pub struct Capacity {
     pub per_group: usize,
     /// The number of distinct aggregator keys to allocate space for.
     pub agg_keys: usize,
+}
+
+fn hash<T: Hash>(t: &T) -> u64 {
+    let mut s = DefaultHasher::new();
+    t.hash(&mut s);
+    s.finish()
 }

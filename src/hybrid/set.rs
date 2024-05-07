@@ -1,7 +1,7 @@
-use std::{collections::{HashMap, HashSet}, hash::{Hash, Hasher, DefaultHasher}};
+use std::{collections::{HashMap, HashSet}, hash::Hash};
 use hashbrown::HashTable;
 
-use crate::Capacity;
+use crate::{Capacity, hash};
 
 /// A collection of distinct pairs (g, k) grouped by g.
 /// 
@@ -92,8 +92,3 @@ where
     }
 }
 
-fn hash<T: Hash>(t: &T) -> u64 {
-    let mut s = DefaultHasher::new();
-    t.hash(&mut s);
-    s.finish()
-}
