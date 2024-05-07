@@ -1,4 +1,4 @@
-use std::{collections::{HashMap, HashSet}, hash::Hash};
+use std::{collections::{HashMap, HashSet}, hash::{Hash, Hasher, DefaultHasher}};
 use hashbrown::HashTable;
 
 use crate::Capacity;
@@ -15,6 +15,8 @@ where
     G: Hash + Eq,
 {
     per_group: usize,
+    /// Key a single copy of each key here, rather than one in each group
+    /// where it appears.
     keys: Vec<K>,
     groups: HashMap<G, HashSet<usize>>,
     key_table: HashTable<usize>,
@@ -22,7 +24,8 @@ where
 
 impl<G, K> BilevelSet<G, K>
 where
-    G: Hash + Eq + Copy
+    G: Hash + Eq + Copy,
+    K: Hash
 {
     /// Create a new collection.
     /// 
@@ -55,11 +58,24 @@ where
     /// 
     /// Return false if the key was already present, otherwise true.
     pub fn insert(
-        &self,
+        &mut self,
         g: G,
         k: impl ToOwned<Owned = K> + PartialEq<K> + Hash
     ) -> bool {
-        todo!()
+        // Find the index of k in the key table, 
+        // adding it if it is new.
+        let &i = self.key_table.entry(
+            hash(&k),
+            |&i| k.eq(&self.keys[i]),
+            |&i| hash(&self.keys[i])
+        ).or_insert_with(||{
+            let i = self.keys.len();
+            self.keys.push(k.to_owned());
+            i
+        }).get();
+        self.groups.entry(g)
+            .or_insert(HashSet::with_capacity(self.per_group))
+            .insert(i)
     }
 
     /// List the pairs currently in the collection without consuming
@@ -73,4 +89,10 @@ where
             .map(|(g, inner)| inner.iter().map(|i| (*g, &self.keys[*i])))
             .flatten()
     }
+}
+
+fn hash<T: Hash>(t: &T) -> u64 {
+    let mut s = DefaultHasher::new();
+    t.hash(&mut s);
+    s.finish()
 }
