@@ -62,7 +62,7 @@ where
         g: G,
         k: impl ToOwned<Owned = K> + PartialEq<K> + Hash
     ) -> bool {
-        // Find the index of k in the key table, 
+        // Find the index of k in the key list, 
         // adding it if it is new.
         let &i = self.key_table.entry(
             hash(&k),
@@ -73,6 +73,7 @@ where
             self.keys.push(k.to_owned());
             i
         }).get();
+        // Add the index found to the group.
         self.groups.entry(g)
             .or_insert(HashSet::with_capacity(self.per_group))
             .insert(i)
