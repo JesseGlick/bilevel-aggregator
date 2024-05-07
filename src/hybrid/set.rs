@@ -29,12 +29,23 @@ where
     /// No initial capacity is allocated, and capacity for a few items
     /// is allocated for each new group key found.
     pub fn new() -> Self {
-        todo!()
+        Self {
+            per_group: 4,
+            keys: Vec::new(),
+            groups: HashMap::new(),
+            key_table: HashTable::new(),
+        }
     }
 
     /// Create a new collection with the specified capacity.
     pub fn with_capacity(capacity: Capacity) -> Self {
-        todo!()
+        let Capacity { groups, per_group, agg_keys } = capacity;
+        Self {
+            per_group,
+            keys: Vec::with_capacity(agg_keys),
+            groups: HashMap::with_capacity(groups),
+            key_table: HashTable::with_capacity(agg_keys),
+        }
     }
 
     /// Insert a key pair found into the collection.
@@ -58,6 +69,8 @@ where
     /// 
     /// Since G is a Copy type, owned values are returned for g.
     pub fn iter(&self) -> impl Iterator<Item = (G, &K)> {
-        todo!()
+        self.groups.iter()
+            .map(|(g, inner)| inner.iter().map(|i| (*g, &self.keys[*i])))
+            .flatten()
     }
 }
