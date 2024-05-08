@@ -75,4 +75,50 @@ impl<G: Hash, K: Hash> BilevelSet<G, K> {
         ).or_insert_with(|| (g.to_owned(), HashSet::with_capacity(self.per_group)))
         .get_mut().1.insert(i)
     }
+
+    /// List the pairs currently in the collection without consuming
+    /// the collection.
+    /// 
+    /// Pairs are grouped by g.
+    pub fn iter(&self) -> Iter<'_, G, K> {
+        Iter::new(self)
+    }
+}
+
+pub struct Iter<'a, G, K> {
+    keys: &'a Vec<K>,
+    outer: hashbrown::hash_table::Iter<'a, (G, HashSet<usize>)>,
+    inner: Option<(&'a G, std::collections::hash_set::Iter<'a, usize>)>,
+}
+
+impl<'a, G, K> Iter<'a, G, K> {
+    fn new(set: &'a BilevelSet<G, K>) -> Self {
+        let mut outer = set.groups.iter();
+        let inner = outer.next().map(wrap_inner);
+        Self { keys: &set.keys, outer, inner }
+    }
+}
+
+impl<'a, G, K> Iterator for Iter<'a, G, K> {
+    type Item = (&'a G, &'a K);
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            if let Some(inner) = &mut self.inner {
+                if let Some(&i) = inner.1.next() {
+                    return Some((inner.0, &self.keys[i]));
+                } else {
+                    self.inner = self.outer.next().map(wrap_inner);
+                }
+            } else {
+                return  None;
+            }
+        }
+    }
+}
+
+fn wrap_inner<G>(inner: &(G, HashSet<usize>))
+    -> (&G, std::collections::hash_set::Iter<'_, usize>)
+{
+    (&inner.0, inner.1.iter())
 }
