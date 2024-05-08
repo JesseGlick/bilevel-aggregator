@@ -58,7 +58,7 @@ pub mod borrow {
 
     pub use map::BilevelMap;
     pub use set::BilevelSet;
-    
+
     #[cfg(test)]
     pub mod tests;
 }
@@ -74,7 +74,7 @@ pub struct Capacity {
     pub agg_keys: usize,
 }
 
-fn hash<T: Hash>(t: &T) -> u64 {
+fn hash<T: Hash + ?Sized>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
     s.finish()
