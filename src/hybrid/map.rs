@@ -2,6 +2,15 @@ use std::{collections::HashMap, hash::Hash};
 use hashbrown::HashTable;
 use crate::{Capacity, hash};
 
+/// A collection of distinct pairs (g, k) grouped by g, with a payload
+/// associated with each pair.
+/// 
+/// As pairs are found, they are added if not already present.
+/// When the collection is iterated over, the pairs are listed by group.
+/// 
+/// G is the type of the group key.
+/// K is the type of the remaining key.
+/// V is the type of the payload.
 pub struct BilevelMap<G, K, V>
 where
     G: Hash + Eq
