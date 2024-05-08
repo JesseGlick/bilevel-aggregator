@@ -83,8 +83,8 @@ pub fn test_map() {
         (5, 10),
         ];
     // Create tests with and without pre-allocated capacity.
-    let mut a: BilevelMap<i32, i32, u32> = BilevelMap::new(|| 0);
-    let mut b: BilevelMap<i32, i32, u32> = BilevelMap::with_capacity(4, 4, || 0);
+    let mut a: BilevelMap<i32, i32, u32> = BilevelMap::new();
+    let mut b: BilevelMap<i32, i32, u32> = BilevelMap::with_capacity(4, 4);
     for (i, (g, k)) in test_data.iter().enumerate() {
         let in_a = a.add_or_get(*g, *k);
         let in_b = b.add_or_get(*g, *k);

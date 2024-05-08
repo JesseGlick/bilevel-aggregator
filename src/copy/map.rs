@@ -16,13 +16,13 @@ where
 {
     data: HashMap<G, HashMap<K, V>>,
     per_group: usize,
-    constructor: Box<dyn Fn () -> V>,
 }
 
 impl<G, K, V> BilevelMap<G, K, V> 
 where
     G: Hash + Eq + Copy + 'static,
     K: Hash + Eq + Copy,
+    V: Default
 {
     /// Create a new collection.
     /// 
@@ -30,11 +30,10 @@ where
     /// is allocated for each new group key found.
     /// 
     /// constructor: A constructor for the payload.
-    pub fn new(constructor: impl Fn () -> V + 'static) -> Self {
+    pub fn new() -> Self {
         Self {
             data: HashMap::new(),
             per_group: 4,
-            constructor: Box::new(constructor)
         }
     }
 
@@ -44,15 +43,10 @@ where
     /// per_group: The number of items to allocate capacity for when a new
     ///     group key is found.
     /// constructor: A constructor for the payload.
-    pub fn with_capacity(
-        groups: usize,
-        per_group: usize,
-        constructor: impl Fn () -> V + 'static
-    ) -> Self {
+    pub fn with_capacity(groups: usize, per_group: usize) -> Self {
         Self {
             data: HashMap::with_capacity(groups),
             per_group,
-            constructor: Box::new(constructor)
         }
     }
 
@@ -63,7 +57,7 @@ where
         self.data.entry(g)
             .or_insert(HashMap::with_capacity(self.per_group))
             .entry(k)
-            .or_insert_with(&self.constructor)
+            .or_insert_with(V::default)
 
     }
 
