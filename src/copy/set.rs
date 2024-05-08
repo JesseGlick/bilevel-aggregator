@@ -64,8 +64,7 @@ where
     /// Since G and K are Copy types, owned values are returned.
     pub fn iter<'a>(&'a self) -> impl Iterator<Item = (G, K)> + 'a {
         self.data.iter()
-            .map(|(g, inner)| inner.iter().map(|k| (*g, *k)))
-            .flatten()
+            .flat_map(|(g, inner)| inner.iter().map(|k| (*g, *k)))
     }
 
     /// List the pairs in the collection and consume the collection.
@@ -73,7 +72,6 @@ where
     /// Pairs are grouped by g.
     pub fn into_iter(self) -> impl Iterator<Item = (G, K)>{
         self.data.into_iter()
-            .map(|(g, inner)| inner.into_iter().map(move |k| (g, k)))
-            .flatten()
+            .flat_map(|(g, inner)| inner.into_iter().map(move |k| (g, k)))
     }
 }

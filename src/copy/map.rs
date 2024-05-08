@@ -76,8 +76,7 @@ where
     /// is still returned by reference.
     pub fn iter(&self) -> impl Iterator<Item = (G, K, &V)> {
         self.data.iter()
-            .map(|(g, inner)| inner.iter().map(|(k, v)| (*g, *k, v)))
-            .flatten()
+            .flat_map(|(g, inner)| inner.iter().map(|(k, v)| (*g, *k, v)))
     }
 
     /// List and consume the payloads for the pairs in the collection,
@@ -86,7 +85,6 @@ where
     /// Pairs are grouped by g.
     pub fn into_iter(self) -> impl Iterator<Item = (G, K, V)> {
         self.data.into_iter()
-            .map(|(g, inner)| inner.into_iter().map(move |(k, v)| (g, k, v)))
-            .flatten()
+            .flat_map(|(g, inner)| inner.into_iter().map(move |(k, v)| (g, k, v)))
     }
 }
