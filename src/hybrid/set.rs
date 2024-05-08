@@ -57,11 +57,10 @@ where
     /// k: the remaining key.
     /// 
     /// Return false if the key was already present, otherwise true.
-    pub fn insert(
-        &mut self,
-        g: G,
-        k: impl ToOwned<Owned = K> + PartialEq<K> + Hash
-    ) -> bool {
+    pub fn insert<KRef>(&mut self, g: G, k: &KRef) -> bool 
+    where
+        KRef: ToOwned<Owned = K> + PartialEq<K> + Hash + ?Sized,
+    {
         // Find the index of k in the key list, 
         // adding it if it is new.
         let &i = self.key_table.entry(

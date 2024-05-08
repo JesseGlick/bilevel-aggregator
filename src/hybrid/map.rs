@@ -49,11 +49,10 @@ where
     /// Get a mutable reference to the payload for the specified key pair.
     /// 
     /// If the key pair is currently not present, the default payload is inserted.
-    pub fn add_or_get(
-        &mut self,
-        g: G,
-        k: impl ToOwned<Owned = K> + PartialEq<K> + Hash
-    ) -> &mut V {
+    pub fn add_or_get<KRef>(&mut self, g: G, k: &KRef) -> &mut V
+    where
+        KRef: ToOwned<Owned = K> + PartialEq<K> + Hash + ?Sized
+    {
         // Find the index of k in the key list, 
         // adding it if it is new.
         let &i = self.key_table.entry(
