@@ -50,6 +50,19 @@ pub mod hybrid {
     pub mod tests;
 }
 
+/// Implementations where neither the group key nor the aggregation key is
+/// a copy type.
+pub mod borrow {
+    mod map;
+    mod set;
+
+    pub use map::BilevelMap;
+    pub use set::BilevelSet;
+    
+    #[cfg(test)]
+    pub mod tests;
+}
+
 /// The capacity dimensions of a BilateralSet of BilateralTree.
 pub struct Capacity {
     /// The number of groups to allocate space for.
