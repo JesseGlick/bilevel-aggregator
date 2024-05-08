@@ -12,37 +12,35 @@ where
     keys: Vec<K>,
     groups: HashMap<G, HashMap<usize, V>>,
     key_table: HashTable<usize>,
-    constructor: Box<dyn Fn () -> V>,
 }
 
 impl<G, K, V> BilevelMap<G, K, V>
 where
     G: Hash + Eq + Copy,
     K: Hash,
+    V: Default,
 {
     /// Create a new collection.
     /// 
     /// No initial capacity is allocated, and capacity for a few items
     /// is allocated for each new group key found.
-    pub fn new(constructor: impl Fn() -> V + 'static) -> Self {
+    pub fn new() -> Self {
         Self {
             per_group: 4,
             keys: Vec::new(),
             groups: HashMap::new(),
             key_table: HashTable::new(),
-            constructor: Box::new(constructor),
         }
     }
 
     // Create a new collection with the specified capacity.
-    pub fn with_capacity(capacity: Capacity, constructor: impl Fn() -> V + 'static) -> Self {
+    pub fn with_capacity(capacity: Capacity) -> Self {
         let Capacity { groups, per_group, agg_keys } = capacity;
         Self {
             per_group,
             keys: Vec::with_capacity(agg_keys),
             groups: HashMap::with_capacity(groups),
             key_table: HashTable::with_capacity(agg_keys),
-            constructor: Box::new(constructor)
         }
     }
 
@@ -67,7 +65,7 @@ where
         self.groups.entry(g)
             .or_insert(HashMap::with_capacity(self.per_group))
             .entry(i)
-            .or_insert_with(&self.constructor)
+            .or_insert_with(V::default)
     }
 
     /// List the payloads for the pairs currently in the collection,
