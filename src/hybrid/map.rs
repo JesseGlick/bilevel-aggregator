@@ -79,7 +79,6 @@ where
     /// Since G is a Copy type, owned values are returned for g.
     pub fn iter(&self) -> impl Iterator<Item = (G, &K, &V)> {
         self.groups.iter()
-            .map(|(g, inner)| inner.iter().map(|(&i, v)| (*g, &self.keys[i], v)))
-            .flatten()
+            .flat_map(|(g, inner)| inner.iter().map(|(&i, v)| (*g, &self.keys[i], v)))
     }
 }
