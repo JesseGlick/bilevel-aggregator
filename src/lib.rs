@@ -26,6 +26,46 @@ use std::hash::{Hash, Hasher, DefaultHasher};
 
 /// Implementations where both the group key and the aggregation key
 /// are copy types.
+/// 
+/// # Examples
+/// ```
+/// use bilevel_aggregator::copy::BilevelSet;
+/// 
+/// let mut set = BilevelSet::new();
+/// set.insert(1, 2);
+/// set.insert(2, 1);
+/// set.insert(1, 2);
+/// set.insert(2, 2);
+/// for (g, k) in set.into_iter() {
+///     println!("{}, {}", g, k)
+/// }
+/// ```
+/// The results will be de-duplicated, and grouped by g.
+/// For example:
+/// 
+/// 1, 2
+/// 2, 1
+/// 2, 2
+/// 
+/// ```
+/// use bilevel_aggregator::copy::BilevelMap;
+/// 
+/// let mut map = BilevelMap::<usize, usize, usize>::new();
+/// *map.add_or_get(1, 2) += 1;
+/// *map.add_or_get(2, 1) += 1;
+/// *map.add_or_get(1, 2) += 1;
+/// *map.add_or_get(2, 2) += 1;
+/// for (g, k, v) in map.into_iter() {
+///     println!("{}, {}, {}", g, k, v)
+/// }
+/// ```
+/// The results will be grouped by g.
+/// For example:
+/// 
+/// 1, 2, 2
+/// 2, 1, 1
+/// 2, 2, 1
+/// 
 pub mod copy {
     mod map;
     mod set;
@@ -39,6 +79,46 @@ pub mod copy {
 
 /// Implementations where the group key is a copy type but the
 /// aggregation key is not.
+/// 
+/// # Examples
+/// ```
+/// use bilevel_aggregator::hybrid::BilevelSet;
+/// 
+/// let mut set = BilevelSet::new();
+/// set.insert(1, "2");
+/// set.insert(2, "1");
+/// set.insert(1, "2");
+/// set.insert(2, "2");
+/// for (g, k) in set.iter() {
+///     println!("{}, {}", g, k)
+/// }
+/// ```
+/// The results will be de-duplicated, and grouped by g.
+/// For example:
+/// 
+/// 1, 2
+/// 2, 1
+/// 2, 2
+/// 
+/// ```
+/// use bilevel_aggregator::hybrid::BilevelMap;
+/// 
+/// let mut map = BilevelMap::<usize, String, usize>::new();
+/// *map.add_or_get(1, "2") += 1;
+/// *map.add_or_get(2, "1") += 1;
+/// *map.add_or_get(1, "2") += 1;
+/// *map.add_or_get(2, "2") += 1;
+/// for (g, k, v) in map.iter() {
+///     println!("{}, {}, {}", g, k, v)
+/// }
+/// ```
+/// The results will be grouped by g.
+/// For example:
+/// 
+/// 1, 2, 2
+/// 2, 1, 1
+/// 2, 2, 1
+/// 
 pub mod hybrid {
     mod map;
     mod set;
@@ -52,6 +132,46 @@ pub mod hybrid {
 
 /// Implementations where neither the group key nor the aggregation key is
 /// a copy type.
+/// 
+/// # Examples
+/// ```
+/// use bilevel_aggregator::borrow::BilevelSet;
+/// 
+/// let mut set = BilevelSet::new();
+/// set.insert("1", "2");
+/// set.insert("2", "1");
+/// set.insert("1", "2");
+/// set.insert("2", "2");
+/// for (g, k) in set.iter() {
+///     println!("{}, {}", g, k)
+/// }
+/// ```
+/// The results will be de-duplicated, and grouped by g.
+/// For example:
+/// 
+/// 1, 2
+/// 2, 1
+/// 2, 2
+/// 
+/// ```
+/// use bilevel_aggregator::borrow::BilevelMap;
+/// 
+/// let mut map = BilevelMap::<String, String, usize>::new();
+/// *map.add_or_get("1", "2") += 1;
+/// *map.add_or_get("2", "1") += 1;
+/// *map.add_or_get("1", "2") += 1;
+/// *map.add_or_get("2", "2") += 1;
+/// for (g, k, v) in map.iter() {
+///     println!("{}, {}, {}", g, k, v)
+/// }
+/// ```
+/// The results will be grouped by g.
+/// For example:
+/// 
+/// 1, 2, 2
+/// 2, 1, 1
+/// 2, 2, 1
+/// 
 pub mod borrow {
     mod map;
     mod set;
