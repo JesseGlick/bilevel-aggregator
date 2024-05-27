@@ -23,7 +23,7 @@
 //!         type but the aggregation key is not.
 //! - hybrid Use the versions in this module where neither key is a copy type.  
 
-
+#[cfg(any(feature = "hybrid", feature = "borrow"))]
 use std::hash::{Hash, Hasher, DefaultHasher};
 
 /// Implementations where both the group key and the aggregation key
@@ -199,6 +199,7 @@ pub struct Capacity {
     pub agg_keys: usize,
 }
 
+#[cfg(any(feature = "hybrid", feature = "borrow"))]
 fn hash<T: Hash + ?Sized>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
