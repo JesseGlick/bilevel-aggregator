@@ -8,6 +8,6 @@ Two primary structures are provided: BilevelSet, which merely lists the aggregat
 
 Three implementations are provided:
 
-- One for where the group key and the aggregation key are copy types.
-- One for where neither the group key nor the aggregation key is a copy type.
-- One for where the group key is a copy type, but the aggregation key is not.
+- One for where the group key and the aggregation key are copy types. (Feature "copy")
+- One for where neither the group key nor the aggregation key is a copy type. (Feature "borrow")
+- One for where the group key is a copy type, but the aggregation key is not. (Feature "hybrid")

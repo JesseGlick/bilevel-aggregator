@@ -15,6 +15,8 @@
 //!
 //! # Modules
 //! 
+//! (Note: Each module is a feature with the same name.)
+//! 
 //! - copy  Use the versions in this module where both the group key and the
 //!         aggregation key are copy types.
 //! - borrow Use the versions in this module where the group key is a copy
@@ -66,6 +68,7 @@ use std::hash::{Hash, Hasher, DefaultHasher};
 /// 2, 1, 1
 /// 2, 2, 1
 /// 
+#[cfg(feature = "copy")]
 pub mod copy {
     mod map;
     mod set;
@@ -119,6 +122,7 @@ pub mod copy {
 /// 2, 1, 1
 /// 2, 2, 1
 /// 
+#[cfg(feature = "hybrid")]
 pub mod hybrid {
     mod map;
     mod set;
@@ -172,6 +176,7 @@ pub mod hybrid {
 /// 2, 1, 1
 /// 2, 2, 1
 /// 
+#[cfg(feature = "borrow")]
 pub mod borrow {
     mod map;
     mod set;
