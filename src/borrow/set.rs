@@ -85,6 +85,26 @@ impl<G: Hash, K: Hash> BilevelSet<G, K> {
     }
 }
 
+impl<G, K> BilevelSet<G, K>
+where
+    G: Clone + PartialEq + Hash,
+    K: Clone + PartialEq + Hash,
+{
+    /// Copy the data into a new collection that groups by the aggregation key.
+    pub fn pivot(&self) -> BilevelSet<K, G> {
+        let capacity = Capacity {
+            groups: self.keys.len(),
+            agg_keys: self.groups.len(),
+            per_group: self.per_group,
+        };
+        let mut pivoted = BilevelSet::with_capacity(capacity);
+        for (g, k) in self.iter() {
+            pivoted.insert(k, g);
+        }
+        pivoted
+    }
+}
+
 pub struct Iter<'a, G, K> {
     keys: &'a Vec<K>,
     outer: hashbrown::hash_table::Iter<'a, (G, HashSet<usize>)>,
