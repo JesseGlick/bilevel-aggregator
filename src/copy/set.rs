@@ -83,7 +83,7 @@ where
 {
     /// Copy the data into a new collection that groups by the aggregation key.
     pub fn pivot(&self) -> BilevelSet<K, G> {
-        // Pre-allocate capacity assuming approximate symmetry
+        // Pre-allocate capacity assuming approximate symmetry.
         let mut pivoted = BilevelSet::with_capacity(self.data.len(), self.per_group);
         for (g, k) in self.iter() {
             pivoted.insert(k, g);
