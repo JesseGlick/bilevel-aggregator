@@ -83,6 +83,28 @@ impl<G: Hash, K: Hash, V: Default> BilevelMap<G, K, V> {
     }
 }
 
+impl<G, K, V> BilevelMap<G, K, V>
+where
+    G: Clone + PartialEq + Hash,
+    K: Clone + PartialEq + Hash,
+    V: Clone + Default,
+{
+    /// Copy the data into a new collection that groups by the aggregation key.
+    pub fn pivot(&self) -> BilevelMap<K, G, V> {
+        let capacity = Capacity {
+            groups: self.keys.len(),
+            agg_keys: self.groups.len(),
+            per_group: self.per_group,
+        };
+        let mut pivoted: BilevelMap<K, G, V> =
+            BilevelMap::with_capacity(capacity);
+        for (g, k, v) in self.iter() {
+            pivoted.add_or_get(k, g).clone_from(v);
+        }
+        pivoted
+    }
+}
+
 pub struct Iter<'a, G, K, V> {
     keys: &'a Vec<K>,
     outer: hashbrown::hash_table::Iter<'a, (G, HashMap<usize, V>)>,
