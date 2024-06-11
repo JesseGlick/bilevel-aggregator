@@ -75,3 +75,19 @@ where
             .flat_map(|(g, inner)| inner.into_iter().map(move |k| (g, k)))
     }
 }
+
+impl<G, K> BilevelSet<G, K>
+where
+    G: Hash + Eq + Copy + 'static,
+    K: Hash + Eq + Copy + 'static,
+{
+    /// Copy the data into a new collection that groups by the aggregation key.
+    pub fn pivot(&self) -> BilevelSet<K, G> {
+        // Pre-allocate capacity assuming approximate symmetry
+        let mut pivoted = BilevelSet::with_capacity(self.data.len(), self.per_group);
+        for (g, k) in self.iter() {
+            pivoted.insert(k, g);
+        }
+        pivoted
+    }
+}
