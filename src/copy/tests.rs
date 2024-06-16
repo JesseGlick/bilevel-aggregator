@@ -34,6 +34,8 @@ pub fn test_set() {
         assert_eq!(in_a, expected);
         assert_eq!(in_b, expected);
     }
+    // Create a pivoted version.
+    let pivoted = a.pivot();
     // Collect the results both with and without consuming.
     let results: [Vec<(i32, i32)>; 4] = [
         a.iter().collect(),
@@ -62,6 +64,24 @@ pub fn test_set() {
             }
             assert!(!set.contains(&g));
         }
+    }
+    // Validate the pivoted results.
+    let result: Vec<_> = pivoted.into_iter().collect();
+    // The total number of pairs should be the same.
+    assert_eq!(result.len(), 11);
+    // The order of the pairs should be reversed.
+    for &(l, r) in test_data.iter() {
+        assert!(result.iter().any(|&(g, k)| (g == r) && (k == l)))
+    }
+    // The results should be grouped by the new group key.
+    let mut set = HashSet::<i32>::new();
+    let mut prev = -1;
+    for (g, _) in result.into_iter() {
+        if g != prev {
+            set.insert(prev);
+            prev = g;
+        }
+        assert!(!set.contains(&g))
     }
 }
 
@@ -100,6 +120,8 @@ pub fn test_map() {
         *in_a += 1;
         *in_b += 1;
     }
+    // Create a pivoted version.
+    let pivoted = a.pivot();
     // Collect the results both with and without consuming.
     let results: [Vec<(i32, i32, u32)>; 4] = [
         a.iter().map(|(g, k, &v)| (g, k, v)).collect(),
@@ -138,4 +160,32 @@ pub fn test_map() {
             assert!(!set.contains(&g));
         }
     }
+    // Validate the pivoted results.
+    let result: Vec<_> = pivoted.into_iter().collect();
+    // The total number of pairs should be the same.
+    assert_eq!(result.len(), 11);
+    // The order of the pairs should be reversed.
+    // The order of the pairs should be reversed.
+    for &(l, r) in test_data.iter() {
+        assert!(result.iter().any(|&(g, k, _)| (g == r) && (k == l)))
+    }
+    // Verify that each pair is associated with the correct count.
+    for &(g, k, v) in result.iter() {
+        let expected: u32 = match (g, k) {
+            (3, 3) => 2,
+            (5, 5) => 2,
+            _ => 1
+        };
+        assert_eq!(v, expected)
+    }
+    // The results should be grouped by the new group key.
+    let mut set: HashSet<i32> = HashSet::new();
+        let mut prev = -1;
+        for (g, _, _) in result.into_iter() {
+            if g != prev {
+                set.insert(prev);
+                prev = g.to_owned();
+            }
+            assert!(!set.contains(&g));
+        }
 }
